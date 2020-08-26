@@ -1,0 +1,3407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>POC: switch game configs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            height: 100%;
+        }
+
+        iframe {
+            border: 0;
+            transition: opacity 0s ease-in-out;
+        }
+
+        iframe.hidden {
+             /*opacity: 0.1;*/
+        }
+
+        button {
+            border: 0;
+            padding: 6px;
+            cursor: pointer;
+        }
+
+        button.active {
+            background-color: #008800;
+            color: #fff;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px;
+        }
+    </style>
+    <script>
+      const c01 = {
+        searchString: 'live=1&gameCode=sw_ss_gro&providerGameCode=sw_live_erol&url=http%3A%2F%2Fapi.cd2.d.skywind-tech.com%3A4000%2Fcasino%2Fgame2',
+        init: {
+          isSyncs: true,
+          moneyFormat: {
+            currency: 'USD',
+            locale: 'en'
+          },
+          locale: {
+            errorPopup: {
+              closeButton: 'Ok'
+            },
+            topPanelMessages: {
+              noMoreBets: 'NO MORE BETS',
+              placeYourBets: 'PLACE YOUR BETS',
+              placeYourBetsSpin: 'PLACE YOUR BETS AND SPIN',
+              lastBets: 'LAST BETS',
+              waitNextRound: 'PLEASE WAIT FOR THE NEXT ROUND',
+              loading: 'LOADING',
+              waitPlayersPlaceBets: 'Please wait other players to place bets'
+            },
+            menuPanelTooltips: {
+              wushi: 'Wu Shi Jackpot',
+              wushiJoin: 'Join Wu Shi Jackpot',
+              wushiLeave: 'Leave Wu Shi Jackpot',
+              waitPlayersPlaceBets: 'Please wait other players to place bets',
+              placeYourBetsSpin: 'PLACE YOUR BETS AND SPIN',
+              limits: 'Limits',
+              payouts: 'Payouts',
+              statistic: 'Statistics',
+              lobby: 'Lobby',
+              chart: 'Chart',
+              racetrack: 'Neighbours Bets',
+              specialBets: 'Special bets',
+              myBets: 'My bets'
+            },
+            betActionTooltips: {
+              undoBet: 'Undo / Hold to Clear',
+              redoBet: 'Rebet',
+              doubleBet: 'Double',
+              confirmBet: 'Confirm',
+              waitNextRound: 'Wait for the next round',
+              minBet: 'Min bet: {0}',
+              maxBet: 'Max bet: {0}',
+              spin: 'Spin',
+              doubleBetSpin: 'Double & Spin',
+              redoBetSpin: 'Rebet & Spin'
+            },
+            betActionLabels: {
+              undo: 'undo',
+              redo: 'rebet',
+              'double': 'double',
+              spin: 'spin',
+              doubleSpin: 'double & spin',
+              redoSpin: 'rebet & spin'
+            },
+            videoPlayer: {
+              playerMessage: 'Please wait'
+            },
+            bottomPanel: {
+              balance: 'Balance',
+              win: 'Win',
+              bet: 'Bet'
+            },
+            audioVideoSettings: {
+              gameSound: 'Game Sound',
+              dealerSound: 'Dealer Sound',
+              low: 'Low',
+              high: 'High',
+              videoQuality: 'Video Quality',
+              audioSettings: 'Audio Settings',
+              videoSettings: 'Video Settings',
+              gameSettings: 'Game Settings',
+              autoConfirmLabel: 'Auto-confirmed bets',
+              backgroundMusic: 'Background Music'
+            },
+            tableOffline: {
+              message: 'This table is currently not available',
+              buttonText: 'Refresh'
+            },
+            interruptedRound: {
+              message: 'Live game hand {0} is finished, you can see the game result in history',
+              buttonText: 'ok'
+            },
+            topPanel: {
+              menuTooltip: 'Menu',
+              settings: 'Settings'
+            },
+            betsMessages: {
+              shoeChange: 'Disabled until shoe change',
+              min: 'Bets below the limit were not accepted',
+              max: 'The bets above the limit were adjusted automatically',
+              totalStakeMaxReached: 'You reached the maximum table limit. Please wait for the next round',
+              totalStakeMaxAdjusted: 'You reached the maximum table limit and your bet was adjusted automatically',
+              totalStakeMinReached: 'Your bets are below the total table min of {0} and will not be accepted',
+              exposureMaxLimitReached: 'The casino max bet limit for this bet is reached. Please wait for the next round',
+              exposureMaxLimitAdjusted: 'The casino max bet limit for this bet is reached. Your bet was adjusted automatically',
+              balanceNotEnough: 'Sorry. Your balance is not sufficient to make a bet',
+              cancelledRound: 'Sorry, the round {0} is cancelled. Your bets will be returned',
+              buttonText: 'ok',
+              shoeChangeStart: 'Card shoe change in progress, please wait',
+              lastCardCancelled: 'The last card was cancelled'
+            },
+            errorHandler: {
+              errorMsg: 'Server error',
+              buttonText: 'back to lobby'
+            },
+            chat: {
+              typeHerePlaceholder: 'Type here to chat',
+              dealer: 'Dealer'
+            },
+            limitsPopup: {
+              buttonText: 'Change limits',
+              applyLimitsText: 'New limits will be applied from the next round',
+              all: 'All',
+              bet: 'Bets',
+              min: 'Min',
+              max: 'Max',
+              pays: 'Pays',
+              payout: 'Payout',
+              table: 'TABLE',
+              title: 'Limits',
+              straight: 'Straight up',
+              split: 'Split',
+              street: 'Street',
+              corner: 'Corner/Basket',
+              line: 'Line',
+              dozen: 'Column/Dozen',
+              red: 'Red/Black',
+              even: 'Even/Odd',
+              low: '1-18/19-36'
+            },
+            popups: {
+              betsConfirmed: 'Bet confirmed',
+              unsupportedPlatform: 'Sorry, there can be some technical issues. For better playing experience we recommend you to use Chrome and the desktop version of the game',
+              gameTemporarilyUnavailable: 'Apologies for the inconvenience, this game is temporarily unavailable.',
+              waitOrGoLobby: 'Please wait or select another game in the lobby.',
+              lobby: 'Lobby',
+              youWin: 'You win',
+              iePopupLabel: 'Please use Chrome or Firefox to play this game.',
+              iePopupButton: 'Install up-to-date browser'
+            },
+            menu: {
+              title: 'Menu',
+              lobby: 'Lobby',
+              cashier: 'Cashier',
+              settings: 'Settings',
+              audioSettings: 'Audio Settings',
+              videoSettings: 'Video Settings',
+              gameSettings: 'Game Settings',
+              fullScreen: 'Full-Screen',
+              chat: 'Chat',
+              help: 'Help',
+              tips: 'Tips',
+              history: 'History',
+              support: 'Support',
+              exit: 'Exit',
+              limits: 'Limits',
+              statistic: 'Statistics'
+            },
+            settings: {
+              gameSound: 'Game sound',
+              dealerSound: 'Dealer sound',
+              showHotAndCold: 'Show hot and cold numbers on map'
+            },
+            chooseYourGameScreen: {
+              chooseYourGame: 'Choose your game',
+              chooseGameMessage: '1% of the bet contributes to Wu Shi Jackpot',
+              dontShowAgain: 'Don\'t show again'
+            },
+            wushiSettings: {
+              on: 'on',
+              grand: 'Grand',
+              major: 'Major',
+              minor: 'Minor',
+              mini: 'Mini',
+              won: 'Won by lucky player',
+              join: 'Join',
+              leave: 'Leave',
+              leaveMessage: 'Are you sure you want to leave Wu Shi Jackpot?'
+            },
+            bottomPanelRoulette: {
+              racetrack: 'Neighbours',
+              specialBets: 'Special bets',
+              chart: 'Chart',
+              statistic: 'Statistics',
+              myBets: 'My bets',
+              rushStats: 'My Rush history'
+            },
+            extendedHistory: {
+              statisticsTitle: 'Statistics',
+              lastSpins: 'Last {0} spins',
+              black: 'black',
+              red: 'red',
+              even: 'even',
+              odd: 'odd',
+              '1st12': '1st 12',
+              '2nd12': '2nd 12',
+              '3rd12': '3rd 12',
+              '1stCol': '1st COL',
+              '2ndCol': '2nd COL',
+              '3rdCol': '3rd COL',
+              tier: 'Tier',
+              orphelins: 'Orphelins',
+              voisins: 'Voisins',
+              zero: 'Zero'
+            },
+            specialBets: {
+              complete: 'Complete Bets',
+              title: 'Finales En Plein',
+              halfComplete: 'Half-complete Bets',
+              placeComplete: 'Place Complete Bets',
+              placeHalfComplete: 'Place Half-complete Bets'
+            },
+            myBets: {
+              buttonTitle: 'add last bet',
+              buttonDone: 'done'
+            },
+            betsArea: {
+              even: 'EVEN',
+              odd: 'ODD',
+              '1st12': '1st 12',
+              '2nd12': '2nd 12',
+              '3rd12': '3rd 12',
+              '1stCol': '1st COL',
+              '2ndCol': '2nd COL',
+              '3rdCol': '3rd COL',
+              '2to1': '2to1'
+            },
+            racetrack: {
+              neighbors: 'Neighbours'
+            },
+            betTypes: {
+              even: 'even',
+              odd: 'odd',
+              black: 'black',
+              red: 'red',
+              '1st12': '1st 12',
+              '2nd12': '2nd 12',
+              '3rd12': '3rd 12',
+              '1stCol': '1st COL',
+              '2ndCol': '2nd COL',
+              '3rdCol': '3rd COL',
+              straight: 'Straight up',
+              split: 'Split',
+              street: 'Street',
+              line: 'Line',
+              tier: 'Tier',
+              orphelins: 'Orphelins',
+              voisins: 'Voisins',
+              zero: 'Zero',
+              corner: 'Corner',
+              column: 'Column',
+              low: '1-18',
+              high: '19-36',
+              dozen: 'Dozen'
+            }
+          },
+          language: 'en',
+          features: {
+            TopPanel: true,
+            TopPanelDealerInfo: true,
+            TopPanelHeader: true,
+            BottomPanel: true,
+            RouletteMenuLimits: true,
+            LimitChange: true,
+            Menu: true,
+            Chat: false
+          },
+          gameParams: {
+            isModal: false
+          },
+          playerHash: 'fa2b87db69c18107222a17cf1e7114e2',
+          playerCode: 'player-1597829552073',
+          gameType: {
+            gameType: 'ROULETTE',
+            subType: 'European Roulette',
+            gameId: 'sw_live_erol'
+          },
+          settings: {
+            type: 'roulette',
+            tableId: 'Roulette-1',
+            provider: 'superspade',
+            providerSettings: {
+              source: 'eu',
+              players: [
+                {
+                  name: 'nanocosmos',
+                  entries: [
+                    {
+                      tag: 'high quality',
+                      info: {
+                        width: 1280,
+                        height: 720,
+                        bitrate: 1200,
+                        framerate: 25
+                      },
+                      index: 0,
+                      label: 'high',
+                      streamname: 'zoZ7x-ofWSz'
+                    },
+                    {
+                      tag: 'medium quality',
+                      info: {
+                        width: 852,
+                        height: 480,
+                        bitrate: 640,
+                        framerate: 25
+                      },
+                      index: 1,
+                      label: 'medium',
+                      streamname: 'zoZ7x-w6Mxv'
+                    },
+                    {
+                      tag: 'low quality',
+                      info: {
+                        width: 480,
+                        height: 270,
+                        bitrate: 250,
+                        framerate: 15
+                      },
+                      index: 2,
+                      label: 'low',
+                      streamname: 'zoZ7x-0wRAr'
+                    }
+                  ]
+                }
+              ],
+              features: {
+                Chat: false
+              },
+              noMoreBetsDelay: 3000,
+              defaultDealerImage: 'https://storage.googleapis.com/lobby.stg1.m27613.com/swgpro/games/posters/sw/en/sw_xpg_hro.jpg'
+            },
+            title: 'Roulette C01',
+            possibleLimits: {
+              low: {
+                bets: {
+                  low: {
+                    max: 1000,
+                    min: 0.25
+                  },
+                  odd: {
+                    max: 1000,
+                    min: 0.25
+                  },
+                  red: {
+                    max: 1000,
+                    min: 0.25
+                  },
+                  even: {
+                    max: 1000,
+                    min: 0.25
+                  },
+                  high: {
+                    max: 1000,
+                    min: 0.25
+                  },
+                  line: {
+                    max: 300,
+                    min: 0.25
+                  },
+                  black: {
+                    max: 1000,
+                    min: 0.25
+                  },
+                  dozen: {
+                    max: 600,
+                    min: 0.25
+                  },
+                  split: {
+                    max: 100,
+                    min: 0.25
+                  },
+                  column: {
+                    max: 600,
+                    min: 0.25
+                  },
+                  corner: {
+                    max: 200,
+                    min: 0.25
+                  },
+                  street: {
+                    max: 150,
+                    min: 0.25
+                  },
+                  straight: {
+                    max: 50,
+                    min: 0.25
+                  }
+                },
+                stakeAll: [
+                  0.25,
+                  0.5,
+                  1,
+                  5,
+                  10,
+                  25,
+                  100,
+                  500
+                ],
+                stakeDef: 1,
+                stakeMax: 50,
+                stakeMin: 0.25,
+                totalStakeMax: 20000,
+                totalStakeMin: 0.25
+              },
+              mid: {
+                bets: {
+                  low: {
+                    max: 2000,
+                    min: 0.5
+                  },
+                  odd: {
+                    max: 2000,
+                    min: 0.5
+                  },
+                  red: {
+                    max: 2000,
+                    min: 0.5
+                  },
+                  even: {
+                    max: 2000,
+                    min: 0.5
+                  },
+                  high: {
+                    max: 2000,
+                    min: 0.5
+                  },
+                  line: {
+                    max: 600,
+                    min: 0.5
+                  },
+                  black: {
+                    max: 2000,
+                    min: 0.5
+                  },
+                  dozen: {
+                    max: 1200,
+                    min: 0.5
+                  },
+                  split: {
+                    max: 200,
+                    min: 0.5
+                  },
+                  column: {
+                    max: 1200,
+                    min: 0.5
+                  },
+                  corner: {
+                    max: 400,
+                    min: 0.5
+                  },
+                  street: {
+                    max: 300,
+                    min: 0.5
+                  },
+                  straight: {
+                    max: 100,
+                    min: 0.5
+                  }
+                },
+                stakeAll: [
+                  0.5,
+                  1,
+                  5,
+                  10,
+                  25,
+                  100,
+                  500,
+                  1000
+                ],
+                stakeDef: 1,
+                stakeMax: 100,
+                stakeMin: 0.5,
+                totalStakeMax: 40000,
+                totalStakeMin: 0.5
+              },
+              high: {
+                bets: {
+                  low: {
+                    max: 4000,
+                    min: 1
+                  },
+                  odd: {
+                    max: 4000,
+                    min: 1
+                  },
+                  red: {
+                    max: 4000,
+                    min: 1
+                  },
+                  even: {
+                    max: 4000,
+                    min: 1
+                  },
+                  high: {
+                    max: 4000,
+                    min: 1
+                  },
+                  line: {
+                    max: 1200,
+                    min: 1
+                  },
+                  black: {
+                    max: 4000,
+                    min: 1
+                  },
+                  dozen: {
+                    max: 2400,
+                    min: 1
+                  },
+                  split: {
+                    max: 400,
+                    min: 1
+                  },
+                  column: {
+                    max: 2400,
+                    min: 1
+                  },
+                  corner: {
+                    max: 800,
+                    min: 1
+                  },
+                  street: {
+                    max: 600,
+                    min: 1
+                  },
+                  straight: {
+                    max: 200,
+                    min: 1
+                  }
+                },
+                stakeAll: [
+                  1,
+                  5,
+                  10,
+                  25,
+                  100,
+                  500,
+                  1000,
+                  2000
+                ],
+                stakeDef: 1,
+                stakeMax: 200,
+                stakeMin: 1,
+                isDefaultRoom: true,
+                totalStakeMax: 80000,
+                totalStakeMin: 1
+              }
+            },
+            low: {
+              bets: {
+                low: {
+                  max: 1000,
+                  min: 0.25
+                },
+                odd: {
+                  max: 1000,
+                  min: 0.25
+                },
+                red: {
+                  max: 1000,
+                  min: 0.25
+                },
+                even: {
+                  max: 1000,
+                  min: 0.25
+                },
+                high: {
+                  max: 1000,
+                  min: 0.25
+                },
+                line: {
+                  max: 300,
+                  min: 0.25
+                },
+                black: {
+                  max: 1000,
+                  min: 0.25
+                },
+                dozen: {
+                  max: 600,
+                  min: 0.25
+                },
+                split: {
+                  max: 100,
+                  min: 0.25
+                },
+                column: {
+                  max: 600,
+                  min: 0.25
+                },
+                corner: {
+                  max: 200,
+                  min: 0.25
+                },
+                street: {
+                  max: 150,
+                  min: 0.25
+                },
+                straight: {
+                  max: 50,
+                  min: 0.25
+                }
+              },
+              stakeAll: [
+                0.25,
+                0.5,
+                1,
+                5,
+                10,
+                25,
+                100,
+                500
+              ],
+              stakeDef: 1,
+              stakeMax: 50,
+              stakeMin: 0.25,
+              totalStakeMax: 20000,
+              totalStakeMin: 0.25
+            },
+            mid: {
+              bets: {
+                low: {
+                  max: 2000,
+                  min: 0.5
+                },
+                odd: {
+                  max: 2000,
+                  min: 0.5
+                },
+                red: {
+                  max: 2000,
+                  min: 0.5
+                },
+                even: {
+                  max: 2000,
+                  min: 0.5
+                },
+                high: {
+                  max: 2000,
+                  min: 0.5
+                },
+                line: {
+                  max: 600,
+                  min: 0.5
+                },
+                black: {
+                  max: 2000,
+                  min: 0.5
+                },
+                dozen: {
+                  max: 1200,
+                  min: 0.5
+                },
+                split: {
+                  max: 200,
+                  min: 0.5
+                },
+                column: {
+                  max: 1200,
+                  min: 0.5
+                },
+                corner: {
+                  max: 400,
+                  min: 0.5
+                },
+                street: {
+                  max: 300,
+                  min: 0.5
+                },
+                straight: {
+                  max: 100,
+                  min: 0.5
+                }
+              },
+              stakeAll: [
+                0.5,
+                1,
+                5,
+                10,
+                25,
+                100,
+                500,
+                1000
+              ],
+              stakeDef: 1,
+              stakeMax: 100,
+              stakeMin: 0.5,
+              totalStakeMax: 40000,
+              totalStakeMin: 0.5
+            },
+            high: {
+              bets: {
+                low: {
+                  max: 4000,
+                  min: 1
+                },
+                odd: {
+                  max: 4000,
+                  min: 1
+                },
+                red: {
+                  max: 4000,
+                  min: 1
+                },
+                even: {
+                  max: 4000,
+                  min: 1
+                },
+                high: {
+                  max: 4000,
+                  min: 1
+                },
+                line: {
+                  max: 1200,
+                  min: 1
+                },
+                black: {
+                  max: 4000,
+                  min: 1
+                },
+                dozen: {
+                  max: 2400,
+                  min: 1
+                },
+                split: {
+                  max: 400,
+                  min: 1
+                },
+                column: {
+                  max: 2400,
+                  min: 1
+                },
+                corner: {
+                  max: 800,
+                  min: 1
+                },
+                street: {
+                  max: 600,
+                  min: 1
+                },
+                straight: {
+                  max: 200,
+                  min: 1
+                }
+              },
+              stakeAll: [
+                1,
+                5,
+                10,
+                25,
+                100,
+                500,
+                1000,
+                2000
+              ],
+              stakeDef: 1,
+              stakeMax: 200,
+              stakeMin: 1,
+              isDefaultRoom: true,
+              totalStakeMax: 80000,
+              totalStakeMin: 1
+            },
+            defaultCoin: 1,
+            coins: [
+              1
+            ],
+            currencyMultiplier: 100,
+            limit: 'high',
+            bets: {
+              low: {
+                max: 2000,
+                min: 0.5
+              },
+              odd: {
+                max: 2000,
+                min: 0.5
+              },
+              red: {
+                max: 2000,
+                min: 0.5
+              },
+              even: {
+                max: 2000,
+                min: 0.5
+              },
+              high: {
+                max: 2000,
+                min: 0.5
+              },
+              line: {
+                max: 600,
+                min: 0.5
+              },
+              black: {
+                max: 2000,
+                min: 0.5
+              },
+              dozen: {
+                max: 1200,
+                min: 0.5
+              },
+              split: {
+                max: 200,
+                min: 0.5
+              },
+              column: {
+                max: 1200,
+                min: 0.5
+              },
+              corner: {
+                max: 400,
+                min: 0.5
+              },
+              street: {
+                max: 300,
+                min: 0.5
+              },
+              straight: {
+                max: 100,
+                min: 0.5
+              }
+            },
+            stakeAll: [
+              0.5,
+              1,
+              5,
+              10,
+              25,
+              100,
+              500,
+              1000
+            ],
+            stakeDef: 1,
+            stakeMax: 100,
+            stakeMin: 0.5,
+            totalStakeMax: 40000,
+            totalStakeMin: 0.5
+          },
+          status: 'online',
+          dealer: {
+            name: 'Deborah O.',
+            picture: 'https://storage.googleapis.com/lobby.stg1.m27613.com/swgpro/games/posters/sw/en/sw_ss_gro.jpg'
+          },
+          chatMessages: [],
+          version: '0.4.14',
+          table: {
+            bets: {}
+          },
+          bets: {
+            straight: {
+              ratio: 35
+            },
+            dozen: {
+              ratio: 2,
+              numberMapping: [
+                [
+                  '1',
+                  '10',
+                  '11',
+                  '12',
+                  '2',
+                  '3',
+                  '4',
+                  '5',
+                  '6',
+                  '7',
+                  '8',
+                  '9'
+                ],
+                [
+                  '13',
+                  '14',
+                  '15',
+                  '16',
+                  '17',
+                  '18',
+                  '19',
+                  '20',
+                  '21',
+                  '22',
+                  '23',
+                  '24'
+                ],
+                [
+                  '25',
+                  '26',
+                  '27',
+                  '28',
+                  '29',
+                  '30',
+                  '31',
+                  '32',
+                  '33',
+                  '34',
+                  '35',
+                  '36'
+                ]
+              ]
+            },
+            column: {
+              ratio: 2,
+              numberMapping: [
+                [
+                  '12',
+                  '15',
+                  '18',
+                  '21',
+                  '24',
+                  '27',
+                  '3',
+                  '30',
+                  '33',
+                  '36',
+                  '6',
+                  '9'
+                ],
+                [
+                  '11',
+                  '14',
+                  '17',
+                  '2',
+                  '20',
+                  '23',
+                  '26',
+                  '29',
+                  '32',
+                  '35',
+                  '5',
+                  '8'
+                ],
+                [
+                  '1',
+                  '10',
+                  '13',
+                  '16',
+                  '19',
+                  '22',
+                  '25',
+                  '28',
+                  '31',
+                  '34',
+                  '4',
+                  '7'
+                ]
+              ]
+            },
+            black: {
+              ratio: 1,
+              numberMapping: [
+                [
+                  '6',
+                  '15',
+                  '24',
+                  '33',
+                  '2',
+                  '8',
+                  '11',
+                  '17',
+                  '20',
+                  '26',
+                  '29',
+                  '35',
+                  '4',
+                  '10',
+                  '13',
+                  '22',
+                  '28',
+                  '31'
+                ]
+              ]
+            },
+            red: {
+              ratio: 1,
+              numberMapping: [
+                [
+                  '3',
+                  '9',
+                  '12',
+                  '18',
+                  '21',
+                  '27',
+                  '30',
+                  '36',
+                  '5',
+                  '14',
+                  '23',
+                  '32',
+                  '1',
+                  '7',
+                  '16',
+                  '19',
+                  '25',
+                  '34'
+                ]
+              ]
+            },
+            high: {
+              ratio: 1,
+              numberMapping: [
+                [
+                  '19',
+                  '20',
+                  '21',
+                  '22',
+                  '23',
+                  '24',
+                  '25',
+                  '26',
+                  '27',
+                  '28',
+                  '29',
+                  '30',
+                  '31',
+                  '32',
+                  '33',
+                  '34',
+                  '35',
+                  '36'
+                ]
+              ]
+            },
+            low: {
+              ratio: 1,
+              numberMapping: [
+                [
+                  '1',
+                  '2',
+                  '3',
+                  '4',
+                  '5',
+                  '6',
+                  '7',
+                  '8',
+                  '9',
+                  '10',
+                  '11',
+                  '12',
+                  '13',
+                  '14',
+                  '15',
+                  '16',
+                  '17',
+                  '18'
+                ]
+              ]
+            },
+            even: {
+              ratio: 1,
+              numberMapping: [
+                [
+                  '2',
+                  '4',
+                  '6',
+                  '8',
+                  '10',
+                  '12',
+                  '14',
+                  '16',
+                  '18',
+                  '20',
+                  '22',
+                  '24',
+                  '26',
+                  '28',
+                  '30',
+                  '32',
+                  '34',
+                  '36'
+                ]
+              ]
+            },
+            odd: {
+              ratio: 1,
+              numberMapping: [
+                [
+                  '1',
+                  '3',
+                  '5',
+                  '7',
+                  '9',
+                  '11',
+                  '13',
+                  '15',
+                  '17',
+                  '19',
+                  '21',
+                  '23',
+                  '25',
+                  '27',
+                  '29',
+                  '31',
+                  '33',
+                  '35'
+                ]
+              ]
+            },
+            split: {
+              ratio: 17,
+              numberMapping: [
+                [
+                  '0',
+                  '3'
+                ],
+                [
+                  '0',
+                  '2'
+                ],
+                [
+                  '0',
+                  '1'
+                ],
+                [
+                  '3',
+                  '6'
+                ],
+                [
+                  '6',
+                  '9'
+                ],
+                [
+                  '12',
+                  '9'
+                ],
+                [
+                  '12',
+                  '15'
+                ],
+                [
+                  '15',
+                  '18'
+                ],
+                [
+                  '18',
+                  '21'
+                ],
+                [
+                  '21',
+                  '24'
+                ],
+                [
+                  '24',
+                  '27'
+                ],
+                [
+                  '27',
+                  '30'
+                ],
+                [
+                  '30',
+                  '33'
+                ],
+                [
+                  '33',
+                  '36'
+                ],
+                [
+                  '2',
+                  '5'
+                ],
+                [
+                  '5',
+                  '8'
+                ],
+                [
+                  '11',
+                  '8'
+                ],
+                [
+                  '11',
+                  '14'
+                ],
+                [
+                  '14',
+                  '17'
+                ],
+                [
+                  '17',
+                  '20'
+                ],
+                [
+                  '20',
+                  '23'
+                ],
+                [
+                  '23',
+                  '26'
+                ],
+                [
+                  '26',
+                  '29'
+                ],
+                [
+                  '29',
+                  '32'
+                ],
+                [
+                  '32',
+                  '35'
+                ],
+                [
+                  '1',
+                  '4'
+                ],
+                [
+                  '4',
+                  '7'
+                ],
+                [
+                  '10',
+                  '7'
+                ],
+                [
+                  '10',
+                  '13'
+                ],
+                [
+                  '13',
+                  '16'
+                ],
+                [
+                  '16',
+                  '19'
+                ],
+                [
+                  '19',
+                  '22'
+                ],
+                [
+                  '22',
+                  '25'
+                ],
+                [
+                  '25',
+                  '28'
+                ],
+                [
+                  '28',
+                  '31'
+                ],
+                [
+                  '31',
+                  '34'
+                ],
+                [
+                  '2',
+                  '3'
+                ],
+                [
+                  '1',
+                  '2'
+                ],
+                [
+                  '5',
+                  '6'
+                ],
+                [
+                  '4',
+                  '5'
+                ],
+                [
+                  '8',
+                  '9'
+                ],
+                [
+                  '7',
+                  '8'
+                ],
+                [
+                  '11',
+                  '12'
+                ],
+                [
+                  '10',
+                  '11'
+                ],
+                [
+                  '14',
+                  '15'
+                ],
+                [
+                  '13',
+                  '14'
+                ],
+                [
+                  '17',
+                  '18'
+                ],
+                [
+                  '16',
+                  '17'
+                ],
+                [
+                  '20',
+                  '21'
+                ],
+                [
+                  '19',
+                  '20'
+                ],
+                [
+                  '23',
+                  '24'
+                ],
+                [
+                  '22',
+                  '23'
+                ],
+                [
+                  '26',
+                  '27'
+                ],
+                [
+                  '25',
+                  '26'
+                ],
+                [
+                  '29',
+                  '30'
+                ],
+                [
+                  '28',
+                  '29'
+                ],
+                [
+                  '32',
+                  '33'
+                ],
+                [
+                  '31',
+                  '32'
+                ],
+                [
+                  '35',
+                  '36'
+                ],
+                [
+                  '34',
+                  '35'
+                ]
+              ]
+            },
+            corner: {
+              ratio: 8,
+              numberMapping: [
+                [
+                  '0',
+                  '1',
+                  '2',
+                  '3'
+                ],
+                [
+                  '2',
+                  '3',
+                  '5',
+                  '6'
+                ],
+                [
+                  '5',
+                  '6',
+                  '8',
+                  '9'
+                ],
+                [
+                  '11',
+                  '12',
+                  '8',
+                  '9'
+                ],
+                [
+                  '11',
+                  '12',
+                  '14',
+                  '15'
+                ],
+                [
+                  '14',
+                  '15',
+                  '17',
+                  '18'
+                ],
+                [
+                  '17',
+                  '18',
+                  '20',
+                  '21'
+                ],
+                [
+                  '20',
+                  '21',
+                  '23',
+                  '24'
+                ],
+                [
+                  '23',
+                  '24',
+                  '26',
+                  '27'
+                ],
+                [
+                  '26',
+                  '27',
+                  '29',
+                  '30'
+                ],
+                [
+                  '29',
+                  '30',
+                  '32',
+                  '33'
+                ],
+                [
+                  '32',
+                  '33',
+                  '35',
+                  '36'
+                ],
+                [
+                  '1',
+                  '2',
+                  '4',
+                  '5'
+                ],
+                [
+                  '4',
+                  '5',
+                  '7',
+                  '8'
+                ],
+                [
+                  '10',
+                  '11',
+                  '7',
+                  '8'
+                ],
+                [
+                  '10',
+                  '11',
+                  '13',
+                  '14'
+                ],
+                [
+                  '13',
+                  '14',
+                  '16',
+                  '17'
+                ],
+                [
+                  '16',
+                  '17',
+                  '19',
+                  '20'
+                ],
+                [
+                  '19',
+                  '20',
+                  '22',
+                  '23'
+                ],
+                [
+                  '22',
+                  '23',
+                  '25',
+                  '26'
+                ],
+                [
+                  '25',
+                  '26',
+                  '28',
+                  '29'
+                ],
+                [
+                  '28',
+                  '29',
+                  '31',
+                  '32'
+                ],
+                [
+                  '31',
+                  '32',
+                  '34',
+                  '35'
+                ]
+              ]
+            },
+            line: {
+              ratio: 5,
+              numberMapping: [
+                [
+                  '1',
+                  '2',
+                  '3',
+                  '4',
+                  '5',
+                  '6'
+                ],
+                [
+                  '4',
+                  '5',
+                  '6',
+                  '7',
+                  '8',
+                  '9'
+                ],
+                [
+                  '10',
+                  '11',
+                  '12',
+                  '7',
+                  '8',
+                  '9'
+                ],
+                [
+                  '10',
+                  '11',
+                  '12',
+                  '13',
+                  '14',
+                  '15'
+                ],
+                [
+                  '13',
+                  '14',
+                  '15',
+                  '16',
+                  '17',
+                  '18'
+                ],
+                [
+                  '16',
+                  '17',
+                  '18',
+                  '19',
+                  '20',
+                  '21'
+                ],
+                [
+                  '19',
+                  '20',
+                  '21',
+                  '22',
+                  '23',
+                  '24'
+                ],
+                [
+                  '22',
+                  '23',
+                  '24',
+                  '25',
+                  '26',
+                  '27'
+                ],
+                [
+                  '25',
+                  '26',
+                  '27',
+                  '28',
+                  '29',
+                  '30'
+                ],
+                [
+                  '28',
+                  '29',
+                  '30',
+                  '31',
+                  '32',
+                  '33'
+                ],
+                [
+                  '31',
+                  '32',
+                  '33',
+                  '34',
+                  '35',
+                  '36'
+                ]
+              ]
+            },
+            street: {
+              ratio: 11,
+              numberMapping: [
+                [
+                  '0',
+                  '1',
+                  '2'
+                ],
+                [
+                  '0',
+                  '2',
+                  '3'
+                ],
+                [
+                  '1',
+                  '2',
+                  '3'
+                ],
+                [
+                  '4',
+                  '5',
+                  '6'
+                ],
+                [
+                  '7',
+                  '8',
+                  '9'
+                ],
+                [
+                  '10',
+                  '11',
+                  '12'
+                ],
+                [
+                  '13',
+                  '14',
+                  '15'
+                ],
+                [
+                  '16',
+                  '17',
+                  '18'
+                ],
+                [
+                  '19',
+                  '20',
+                  '21'
+                ],
+                [
+                  '22',
+                  '23',
+                  '24'
+                ],
+                [
+                  '25',
+                  '26',
+                  '27'
+                ],
+                [
+                  '28',
+                  '29',
+                  '30'
+                ],
+                [
+                  '31',
+                  '32',
+                  '33'
+                ],
+                [
+                  '34',
+                  '35',
+                  '36'
+                ]
+              ]
+            }
+          },
+          countdown: {
+            isActive: false
+          }
+        }
+      };
+      const d01 = {
+        searchString: 'live=1&gameCode=sw_xpg_hro&providerGameCode=sw_live_erol&url=http%3A%2F%2Fapi.cd2.d.skywind-tech.com%3A4000%2Fcasino%2Fgame2',
+        init: {
+          isSyncs: true,
+            moneyFormat: {
+            currency: 'USD',
+              locale: 'en'
+          },
+          locale: {
+            errorPopup: {
+              closeButton: 'Ok'
+            },
+            topPanelMessages: {
+              noMoreBets: 'NO MORE BETS',
+                placeYourBets: 'PLACE YOUR BETS',
+                placeYourBetsSpin: 'PLACE YOUR BETS AND SPIN',
+                lastBets: 'LAST BETS',
+                waitNextRound: 'PLEASE WAIT FOR THE NEXT ROUND',
+                loading: 'LOADING',
+                waitPlayersPlaceBets: 'Please wait other players to place bets'
+            },
+            menuPanelTooltips: {
+              wushi: 'Wu Shi Jackpot',
+                wushiJoin: 'Join Wu Shi Jackpot',
+                wushiLeave: 'Leave Wu Shi Jackpot',
+                waitPlayersPlaceBets: 'Please wait other players to place bets',
+                placeYourBetsSpin: 'PLACE YOUR BETS AND SPIN',
+                limits: 'Limits',
+                payouts: 'Payouts',
+                statistic: 'Statistics',
+                lobby: 'Lobby',
+                chart: 'Chart',
+                racetrack: 'Neighbours Bets',
+                specialBets: 'Special bets',
+                myBets: 'My bets'
+            },
+            betActionTooltips: {
+              undoBet: 'Undo / Hold to Clear',
+                redoBet: 'Rebet',
+                doubleBet: 'Double',
+                confirmBet: 'Confirm',
+                waitNextRound: 'Wait for the next round',
+                minBet: 'Min bet: {0}',
+                maxBet: 'Max bet: {0}',
+                spin: 'Spin',
+                doubleBetSpin: 'Double & Spin',
+                redoBetSpin: 'Rebet & Spin'
+            },
+            betActionLabels: {
+              undo: 'undo',
+                redo: 'rebet',
+                'double': 'double',
+                spin: 'spin',
+                doubleSpin: 'double & spin',
+                redoSpin: 'rebet & spin'
+            },
+            videoPlayer: {
+              playerMessage: 'Please wait'
+            },
+            bottomPanel: {
+              balance: 'Balance',
+                win: 'Win',
+                bet: 'Bet'
+            },
+            audioVideoSettings: {
+              gameSound: 'Game Sound',
+                dealerSound: 'Dealer Sound',
+                low: 'Low',
+                high: 'High',
+                videoQuality: 'Video Quality',
+                audioSettings: 'Audio Settings',
+                videoSettings: 'Video Settings',
+                gameSettings: 'Game Settings',
+                autoConfirmLabel: 'Auto-confirmed bets',
+                backgroundMusic: 'Background Music'
+            },
+            tableOffline: {
+              message: 'This table is currently not available',
+                buttonText: 'Refresh'
+            },
+            interruptedRound: {
+              message: 'Live game hand {0} is finished, you can see the game result in history',
+                buttonText: 'ok'
+            },
+            topPanel: {
+              menuTooltip: 'Menu',
+                settings: 'Settings'
+            },
+            betsMessages: {
+              shoeChange: 'Disabled until shoe change',
+                min: 'Bets below the limit were not accepted',
+                max: 'The bets above the limit were adjusted automatically',
+                totalStakeMaxReached: 'You reached the maximum table limit. Please wait for the next round',
+                totalStakeMaxAdjusted: 'You reached the maximum table limit and your bet was adjusted automatically',
+                totalStakeMinReached: 'Your bets are below the total table min of {0} and will not be accepted',
+                exposureMaxLimitReached: 'The casino max bet limit for this bet is reached. Please wait for the next round',
+                exposureMaxLimitAdjusted: 'The casino max bet limit for this bet is reached. Your bet was adjusted automatically',
+                balanceNotEnough: 'Sorry. Your balance is not sufficient to make a bet',
+                cancelledRound: 'Sorry, the round {0} is cancelled. Your bets will be returned',
+                buttonText: 'ok',
+                shoeChangeStart: 'Card shoe change in progress, please wait',
+                lastCardCancelled: 'The last card was cancelled'
+            },
+            errorHandler: {
+              errorMsg: 'Server error',
+                buttonText: 'back to lobby'
+            },
+            chat: {
+              typeHerePlaceholder: 'Type here to chat',
+                dealer: 'Dealer'
+            },
+            limitsPopup: {
+              buttonText: 'Change limits',
+                applyLimitsText: 'New limits will be applied from the next round',
+                all: 'All',
+                bet: 'Bets',
+                min: 'Min',
+                max: 'Max',
+                pays: 'Pays',
+                payout: 'Payout',
+                table: 'TABLE',
+                title: 'Limits',
+                straight: 'Straight up',
+                split: 'Split',
+                street: 'Street',
+                corner: 'Corner/Basket',
+                line: 'Line',
+                dozen: 'Column/Dozen',
+                red: 'Red/Black',
+                even: 'Even/Odd',
+                low: '1-18/19-36'
+            },
+            popups: {
+              betsConfirmed: 'Bet confirmed',
+                unsupportedPlatform: 'Sorry, there can be some technical issues. For better playing experience we recommend you to use Chrome and the desktop version of the game',
+                gameTemporarilyUnavailable: 'Apologies for the inconvenience, this game is temporarily unavailable.',
+                waitOrGoLobby: 'Please wait or select another game in the lobby.',
+                lobby: 'Lobby',
+                youWin: 'You win',
+                iePopupLabel: 'Please use Chrome or Firefox to play this game.',
+                iePopupButton: 'Install up-to-date browser'
+            },
+            menu: {
+              title: 'Menu',
+                lobby: 'Lobby',
+                cashier: 'Cashier',
+                settings: 'Settings',
+                audioSettings: 'Audio Settings',
+                videoSettings: 'Video Settings',
+                gameSettings: 'Game Settings',
+                fullScreen: 'Full-Screen',
+                chat: 'Chat',
+                help: 'Help',
+                tips: 'Tips',
+                history: 'History',
+                support: 'Support',
+                exit: 'Exit',
+                limits: 'Limits',
+                statistic: 'Statistics'
+            },
+            settings: {
+              gameSound: 'Game sound',
+                dealerSound: 'Dealer sound',
+                showHotAndCold: 'Show hot and cold numbers on map'
+            },
+            chooseYourGameScreen: {
+              chooseYourGame: 'Choose your game',
+                chooseGameMessage: '1% of the bet contributes to Wu Shi Jackpot',
+                dontShowAgain: 'Don\'t show again'
+            },
+            wushiSettings: {
+              on: 'on',
+                grand: 'Grand',
+                major: 'Major',
+                minor: 'Minor',
+                mini: 'Mini',
+                won: 'Won by lucky player',
+                join: 'Join',
+                leave: 'Leave',
+                leaveMessage: 'Are you sure you want to leave Wu Shi Jackpot?'
+            },
+            bottomPanelRoulette: {
+              racetrack: 'Neighbours',
+                specialBets: 'Special bets',
+                chart: 'Chart',
+                statistic: 'Statistics',
+                myBets: 'My bets',
+                rushStats: 'My Rush history'
+            },
+            extendedHistory: {
+              statisticsTitle: 'Statistics',
+                lastSpins: 'Last {0} spins',
+                black: 'black',
+                red: 'red',
+                even: 'even',
+                odd: 'odd',
+                '1st12': '1st 12',
+                '2nd12': '2nd 12',
+                '3rd12': '3rd 12',
+                '1stCol': '1st COL',
+                '2ndCol': '2nd COL',
+                '3rdCol': '3rd COL',
+                tier: 'Tier',
+                orphelins: 'Orphelins',
+                voisins: 'Voisins',
+                zero: 'Zero'
+            },
+            specialBets: {
+              complete: 'Complete Bets',
+                title: 'Finales En Plein',
+                halfComplete: 'Half-complete Bets',
+                placeComplete: 'Place Complete Bets',
+                placeHalfComplete: 'Place Half-complete Bets'
+            },
+            myBets: {
+              buttonTitle: 'add last bet',
+                buttonDone: 'done'
+            },
+            betsArea: {
+              even: 'EVEN',
+                odd: 'ODD',
+                '1st12': '1st 12',
+                '2nd12': '2nd 12',
+                '3rd12': '3rd 12',
+                '1stCol': '1st COL',
+                '2ndCol': '2nd COL',
+                '3rdCol': '3rd COL',
+                '2to1': '2to1'
+            },
+            racetrack: {
+              neighbors: 'Neighbours'
+            },
+            betTypes: {
+              even: 'even',
+                odd: 'odd',
+                black: 'black',
+                red: 'red',
+                '1st12': '1st 12',
+                '2nd12': '2nd 12',
+                '3rd12': '3rd 12',
+                '1stCol': '1st COL',
+                '2ndCol': '2nd COL',
+                '3rdCol': '3rd COL',
+                straight: 'Straight up',
+                split: 'Split',
+                street: 'Street',
+                line: 'Line',
+                tier: 'Tier',
+                orphelins: 'Orphelins',
+                voisins: 'Voisins',
+                zero: 'Zero',
+                corner: 'Corner',
+                column: 'Column',
+                low: '1-18',
+                high: '19-36',
+                dozen: 'Dozen'
+            }
+          },
+          language: 'en',
+            features: {
+            TopPanel: true,
+              TopPanelDealerInfo: true,
+              TopPanelHeader: true,
+              BottomPanel: true,
+              RouletteMenuLimits: true,
+              LimitChange: true,
+              Menu: true,
+              Chat: false
+          },
+          gameParams: {
+            isModal: false
+          },
+          playerHash: 'eab1a01d4b29c1021e1bee2089330d6e',
+            playerCode: 'player1597779067314',
+            gameType: {
+            gameType: 'ROULETTE',
+              subType: 'European Roulette',
+              gameId: 'sw_live_erol'
+          },
+          settings: {
+            type: 'roulette',
+              tableId: '1',
+              provider: 'xpg',
+              providerSettings: {
+              source: 'eu',
+                players: [
+                {
+                  name: 'nanocosmos',
+                  entries: [
+                    {
+                      tag: 'high quality',
+                      info: {
+                        width: 1280,
+                        height: 720,
+                        bitrate: 1200,
+                        framerate: 25
+                      },
+                      index: 0,
+                      label: 'high',
+                      streamname: 'zoZ7x-REUy0'
+                    },
+                    {
+                      tag: 'medium quality',
+                      info: {
+                        width: 852,
+                        height: 480,
+                        bitrate: 640,
+                        framerate: 25
+                      },
+                      index: 1,
+                      label: 'medium',
+                      streamname: 'zoZ7x-mijAX'
+                    },
+                    {
+                      tag: 'low quality',
+                      info: {
+                        width: 480,
+                        height: 270,
+                        bitrate: 250,
+                        framerate: 15
+                      },
+                      index: 2,
+                      label: 'low',
+                      streamname: 'zoZ7x-AQYM1'
+                    }
+                  ]
+                }
+              ],
+                features: {
+                Chat: false
+              },
+              noMoreBetsDelay: 3000,
+                defaultDealerImage: 'https://storage.googleapis.com/lobby.stg1.m27613.com/swgpro/games/posters/sw/en/sw_xpg_hro.jpg'
+            },
+            title: 'Roulette D01',
+              possibleLimits: {
+              low: {
+                bets: {
+                  low: {
+                    max: 1000,
+                      min: 0.25
+                  },
+                  odd: {
+                    max: 1000,
+                      min: 0.25
+                  },
+                  red: {
+                    max: 1000,
+                      min: 0.25
+                  },
+                  even: {
+                    max: 1000,
+                      min: 0.25
+                  },
+                  high: {
+                    max: 1000,
+                      min: 0.25
+                  },
+                  line: {
+                    max: 300,
+                      min: 0.25
+                  },
+                  black: {
+                    max: 1000,
+                      min: 0.25
+                  },
+                  dozen: {
+                    max: 600,
+                      min: 0.25
+                  },
+                  split: {
+                    max: 100,
+                      min: 0.25
+                  },
+                  column: {
+                    max: 600,
+                      min: 0.25
+                  },
+                  corner: {
+                    max: 200,
+                      min: 0.25
+                  },
+                  street: {
+                    max: 150,
+                      min: 0.25
+                  },
+                  straight: {
+                    max: 50,
+                      min: 0.25
+                  }
+                },
+                stakeAll: [
+                  0.25,
+                  0.5,
+                  1,
+                  5,
+                  10,
+                  25,
+                  100,
+                  500
+                ],
+                  stakeDef: 1,
+                  stakeMax: 50,
+                  stakeMin: 0.25,
+                  totalStakeMax: 20000,
+                  totalStakeMin: 0.25
+              },
+              mid: {
+                bets: {
+                  low: {
+                    max: 2000,
+                      min: 0.5
+                  },
+                  odd: {
+                    max: 2000,
+                      min: 0.5
+                  },
+                  red: {
+                    max: 2000,
+                      min: 0.5
+                  },
+                  even: {
+                    max: 2000,
+                      min: 0.5
+                  },
+                  high: {
+                    max: 2000,
+                      min: 0.5
+                  },
+                  line: {
+                    max: 600,
+                      min: 0.5
+                  },
+                  black: {
+                    max: 2000,
+                      min: 0.5
+                  },
+                  dozen: {
+                    max: 1200,
+                      min: 0.5
+                  },
+                  split: {
+                    max: 200,
+                      min: 0.5
+                  },
+                  column: {
+                    max: 1200,
+                      min: 0.5
+                  },
+                  corner: {
+                    max: 400,
+                      min: 0.5
+                  },
+                  street: {
+                    max: 300,
+                      min: 0.5
+                  },
+                  straight: {
+                    max: 100,
+                      min: 0.5
+                  }
+                },
+                stakeAll: [
+                  0.5,
+                  1,
+                  5,
+                  10,
+                  25,
+                  100,
+                  500,
+                  1000
+                ],
+                  stakeDef: 1,
+                  stakeMax: 100,
+                  stakeMin: 0.5,
+                  totalStakeMax: 40000,
+                  totalStakeMin: 0.5
+              },
+              high: {
+                bets: {
+                  low: {
+                    max: 4000,
+                      min: 1
+                  },
+                  odd: {
+                    max: 4000,
+                      min: 1
+                  },
+                  red: {
+                    max: 4000,
+                      min: 1
+                  },
+                  even: {
+                    max: 4000,
+                      min: 1
+                  },
+                  high: {
+                    max: 4000,
+                      min: 1
+                  },
+                  line: {
+                    max: 1200,
+                      min: 1
+                  },
+                  black: {
+                    max: 4000,
+                      min: 1
+                  },
+                  dozen: {
+                    max: 2400,
+                      min: 1
+                  },
+                  split: {
+                    max: 400,
+                      min: 1
+                  },
+                  column: {
+                    max: 2400,
+                      min: 1
+                  },
+                  corner: {
+                    max: 800,
+                      min: 1
+                  },
+                  street: {
+                    max: 600,
+                      min: 1
+                  },
+                  straight: {
+                    max: 200,
+                      min: 1
+                  }
+                },
+                stakeAll: [
+                  1,
+                  5,
+                  10,
+                  25,
+                  100,
+                  500,
+                  1000,
+                  2000
+                ],
+                  stakeDef: 1,
+                  stakeMax: 200,
+                  stakeMin: 1,
+                  isDefaultRoom: true,
+                  totalStakeMax: 80000,
+                  totalStakeMin: 1
+              }
+            },
+            low: {
+              bets: {
+                low: {
+                  max: 1000,
+                    min: 0.25
+                },
+                odd: {
+                  max: 1000,
+                    min: 0.25
+                },
+                red: {
+                  max: 1000,
+                    min: 0.25
+                },
+                even: {
+                  max: 1000,
+                    min: 0.25
+                },
+                high: {
+                  max: 1000,
+                    min: 0.25
+                },
+                line: {
+                  max: 300,
+                    min: 0.25
+                },
+                black: {
+                  max: 1000,
+                    min: 0.25
+                },
+                dozen: {
+                  max: 600,
+                    min: 0.25
+                },
+                split: {
+                  max: 100,
+                    min: 0.25
+                },
+                column: {
+                  max: 600,
+                    min: 0.25
+                },
+                corner: {
+                  max: 200,
+                    min: 0.25
+                },
+                street: {
+                  max: 150,
+                    min: 0.25
+                },
+                straight: {
+                  max: 50,
+                    min: 0.25
+                }
+              },
+              stakeAll: [
+                0.25,
+                0.5,
+                1,
+                5,
+                10,
+                25,
+                100,
+                500
+              ],
+                stakeDef: 1,
+                stakeMax: 50,
+                stakeMin: 0.25,
+                totalStakeMax: 20000,
+                totalStakeMin: 0.25
+            },
+            mid: {
+              bets: {
+                low: {
+                  max: 2000,
+                    min: 0.5
+                },
+                odd: {
+                  max: 2000,
+                    min: 0.5
+                },
+                red: {
+                  max: 2000,
+                    min: 0.5
+                },
+                even: {
+                  max: 2000,
+                    min: 0.5
+                },
+                high: {
+                  max: 2000,
+                    min: 0.5
+                },
+                line: {
+                  max: 600,
+                    min: 0.5
+                },
+                black: {
+                  max: 2000,
+                    min: 0.5
+                },
+                dozen: {
+                  max: 1200,
+                    min: 0.5
+                },
+                split: {
+                  max: 200,
+                    min: 0.5
+                },
+                column: {
+                  max: 1200,
+                    min: 0.5
+                },
+                corner: {
+                  max: 400,
+                    min: 0.5
+                },
+                street: {
+                  max: 300,
+                    min: 0.5
+                },
+                straight: {
+                  max: 100,
+                    min: 0.5
+                }
+              },
+              stakeAll: [
+                0.5,
+                1,
+                5,
+                10,
+                25,
+                100,
+                500,
+                1000
+              ],
+                stakeDef: 1,
+                stakeMax: 100,
+                stakeMin: 0.5,
+                totalStakeMax: 40000,
+                totalStakeMin: 0.5
+            },
+            high: {
+              bets: {
+                low: {
+                  max: 4000,
+                    min: 1
+                },
+                odd: {
+                  max: 4000,
+                    min: 1
+                },
+                red: {
+                  max: 4000,
+                    min: 1
+                },
+                even: {
+                  max: 4000,
+                    min: 1
+                },
+                high: {
+                  max: 4000,
+                    min: 1
+                },
+                line: {
+                  max: 1200,
+                    min: 1
+                },
+                black: {
+                  max: 4000,
+                    min: 1
+                },
+                dozen: {
+                  max: 2400,
+                    min: 1
+                },
+                split: {
+                  max: 400,
+                    min: 1
+                },
+                column: {
+                  max: 2400,
+                    min: 1
+                },
+                corner: {
+                  max: 800,
+                    min: 1
+                },
+                street: {
+                  max: 600,
+                    min: 1
+                },
+                straight: {
+                  max: 200,
+                    min: 1
+                }
+              },
+              stakeAll: [
+                1,
+                5,
+                10,
+                25,
+                100,
+                500,
+                1000,
+                2000
+              ],
+                stakeDef: 1,
+                stakeMax: 200,
+                stakeMin: 1,
+                isDefaultRoom: true,
+                totalStakeMax: 80000,
+                totalStakeMin: 1
+            },
+            defaultCoin: 1,
+              coins: [
+              1
+            ],
+              currencyMultiplier: 100,
+              limit: 'high',
+              bets: {
+              low: {
+                max: 2000,
+                  min: 0.5
+              },
+              odd: {
+                max: 2000,
+                  min: 0.5
+              },
+              red: {
+                max: 2000,
+                  min: 0.5
+              },
+              even: {
+                max: 2000,
+                  min: 0.5
+              },
+              high: {
+                max: 2000,
+                  min: 0.5
+              },
+              line: {
+                max: 600,
+                  min: 0.5
+              },
+              black: {
+                max: 2000,
+                  min: 0.5
+              },
+              dozen: {
+                max: 1200,
+                  min: 0.5
+              },
+              split: {
+                max: 200,
+                  min: 0.5
+              },
+              column: {
+                max: 1200,
+                  min: 0.5
+              },
+              corner: {
+                max: 400,
+                  min: 0.5
+              },
+              street: {
+                max: 300,
+                  min: 0.5
+              },
+              straight: {
+                max: 100,
+                  min: 0.5
+              }
+            },
+            stakeAll: [
+              0.5,
+              1,
+              5,
+              10,
+              25,
+              100,
+              500,
+              1000
+            ],
+              stakeDef: 1,
+              stakeMax: 100,
+              stakeMin: 0.5,
+              totalStakeMax: 40000,
+              totalStakeMin: 0.5
+          },
+          status: 'online',
+            dealer: {
+            name: 'Deborah O.',
+              picture: 'https://storage.googleapis.com/lobby.stg1.m27613.com/swgpro/games/posters/sw/en/sw_xpg_hro.jpg'
+          },
+          chatMessages: [],
+            version: '0.4.14',
+            table: {
+            bets: {}
+          },
+          bets: {
+            straight: {
+              ratio: 35
+            },
+            dozen: {
+              ratio: 2,
+                numberMapping: [
+                [
+                  '1',
+                  '10',
+                  '11',
+                  '12',
+                  '2',
+                  '3',
+                  '4',
+                  '5',
+                  '6',
+                  '7',
+                  '8',
+                  '9'
+                ],
+                [
+                  '13',
+                  '14',
+                  '15',
+                  '16',
+                  '17',
+                  '18',
+                  '19',
+                  '20',
+                  '21',
+                  '22',
+                  '23',
+                  '24'
+                ],
+                [
+                  '25',
+                  '26',
+                  '27',
+                  '28',
+                  '29',
+                  '30',
+                  '31',
+                  '32',
+                  '33',
+                  '34',
+                  '35',
+                  '36'
+                ]
+              ]
+            },
+            column: {
+              ratio: 2,
+                numberMapping: [
+                [
+                  '12',
+                  '15',
+                  '18',
+                  '21',
+                  '24',
+                  '27',
+                  '3',
+                  '30',
+                  '33',
+                  '36',
+                  '6',
+                  '9'
+                ],
+                [
+                  '11',
+                  '14',
+                  '17',
+                  '2',
+                  '20',
+                  '23',
+                  '26',
+                  '29',
+                  '32',
+                  '35',
+                  '5',
+                  '8'
+                ],
+                [
+                  '1',
+                  '10',
+                  '13',
+                  '16',
+                  '19',
+                  '22',
+                  '25',
+                  '28',
+                  '31',
+                  '34',
+                  '4',
+                  '7'
+                ]
+              ]
+            },
+            black: {
+              ratio: 1,
+                numberMapping: [
+                [
+                  '6',
+                  '15',
+                  '24',
+                  '33',
+                  '2',
+                  '8',
+                  '11',
+                  '17',
+                  '20',
+                  '26',
+                  '29',
+                  '35',
+                  '4',
+                  '10',
+                  '13',
+                  '22',
+                  '28',
+                  '31'
+                ]
+              ]
+            },
+            red: {
+              ratio: 1,
+                numberMapping: [
+                [
+                  '3',
+                  '9',
+                  '12',
+                  '18',
+                  '21',
+                  '27',
+                  '30',
+                  '36',
+                  '5',
+                  '14',
+                  '23',
+                  '32',
+                  '1',
+                  '7',
+                  '16',
+                  '19',
+                  '25',
+                  '34'
+                ]
+              ]
+            },
+            high: {
+              ratio: 1,
+                numberMapping: [
+                [
+                  '19',
+                  '20',
+                  '21',
+                  '22',
+                  '23',
+                  '24',
+                  '25',
+                  '26',
+                  '27',
+                  '28',
+                  '29',
+                  '30',
+                  '31',
+                  '32',
+                  '33',
+                  '34',
+                  '35',
+                  '36'
+                ]
+              ]
+            },
+            low: {
+              ratio: 1,
+                numberMapping: [
+                [
+                  '1',
+                  '2',
+                  '3',
+                  '4',
+                  '5',
+                  '6',
+                  '7',
+                  '8',
+                  '9',
+                  '10',
+                  '11',
+                  '12',
+                  '13',
+                  '14',
+                  '15',
+                  '16',
+                  '17',
+                  '18'
+                ]
+              ]
+            },
+            even: {
+              ratio: 1,
+                numberMapping: [
+                [
+                  '2',
+                  '4',
+                  '6',
+                  '8',
+                  '10',
+                  '12',
+                  '14',
+                  '16',
+                  '18',
+                  '20',
+                  '22',
+                  '24',
+                  '26',
+                  '28',
+                  '30',
+                  '32',
+                  '34',
+                  '36'
+                ]
+              ]
+            },
+            odd: {
+              ratio: 1,
+                numberMapping: [
+                [
+                  '1',
+                  '3',
+                  '5',
+                  '7',
+                  '9',
+                  '11',
+                  '13',
+                  '15',
+                  '17',
+                  '19',
+                  '21',
+                  '23',
+                  '25',
+                  '27',
+                  '29',
+                  '31',
+                  '33',
+                  '35'
+                ]
+              ]
+            },
+            split: {
+              ratio: 17,
+                numberMapping: [
+                [
+                  '0',
+                  '3'
+                ],
+                [
+                  '0',
+                  '2'
+                ],
+                [
+                  '0',
+                  '1'
+                ],
+                [
+                  '3',
+                  '6'
+                ],
+                [
+                  '6',
+                  '9'
+                ],
+                [
+                  '12',
+                  '9'
+                ],
+                [
+                  '12',
+                  '15'
+                ],
+                [
+                  '15',
+                  '18'
+                ],
+                [
+                  '18',
+                  '21'
+                ],
+                [
+                  '21',
+                  '24'
+                ],
+                [
+                  '24',
+                  '27'
+                ],
+                [
+                  '27',
+                  '30'
+                ],
+                [
+                  '30',
+                  '33'
+                ],
+                [
+                  '33',
+                  '36'
+                ],
+                [
+                  '2',
+                  '5'
+                ],
+                [
+                  '5',
+                  '8'
+                ],
+                [
+                  '11',
+                  '8'
+                ],
+                [
+                  '11',
+                  '14'
+                ],
+                [
+                  '14',
+                  '17'
+                ],
+                [
+                  '17',
+                  '20'
+                ],
+                [
+                  '20',
+                  '23'
+                ],
+                [
+                  '23',
+                  '26'
+                ],
+                [
+                  '26',
+                  '29'
+                ],
+                [
+                  '29',
+                  '32'
+                ],
+                [
+                  '32',
+                  '35'
+                ],
+                [
+                  '1',
+                  '4'
+                ],
+                [
+                  '4',
+                  '7'
+                ],
+                [
+                  '10',
+                  '7'
+                ],
+                [
+                  '10',
+                  '13'
+                ],
+                [
+                  '13',
+                  '16'
+                ],
+                [
+                  '16',
+                  '19'
+                ],
+                [
+                  '19',
+                  '22'
+                ],
+                [
+                  '22',
+                  '25'
+                ],
+                [
+                  '25',
+                  '28'
+                ],
+                [
+                  '28',
+                  '31'
+                ],
+                [
+                  '31',
+                  '34'
+                ],
+                [
+                  '2',
+                  '3'
+                ],
+                [
+                  '1',
+                  '2'
+                ],
+                [
+                  '5',
+                  '6'
+                ],
+                [
+                  '4',
+                  '5'
+                ],
+                [
+                  '8',
+                  '9'
+                ],
+                [
+                  '7',
+                  '8'
+                ],
+                [
+                  '11',
+                  '12'
+                ],
+                [
+                  '10',
+                  '11'
+                ],
+                [
+                  '14',
+                  '15'
+                ],
+                [
+                  '13',
+                  '14'
+                ],
+                [
+                  '17',
+                  '18'
+                ],
+                [
+                  '16',
+                  '17'
+                ],
+                [
+                  '20',
+                  '21'
+                ],
+                [
+                  '19',
+                  '20'
+                ],
+                [
+                  '23',
+                  '24'
+                ],
+                [
+                  '22',
+                  '23'
+                ],
+                [
+                  '26',
+                  '27'
+                ],
+                [
+                  '25',
+                  '26'
+                ],
+                [
+                  '29',
+                  '30'
+                ],
+                [
+                  '28',
+                  '29'
+                ],
+                [
+                  '32',
+                  '33'
+                ],
+                [
+                  '31',
+                  '32'
+                ],
+                [
+                  '35',
+                  '36'
+                ],
+                [
+                  '34',
+                  '35'
+                ]
+              ]
+            },
+            corner: {
+              ratio: 8,
+                numberMapping: [
+                [
+                  '0',
+                  '1',
+                  '2',
+                  '3'
+                ],
+                [
+                  '2',
+                  '3',
+                  '5',
+                  '6'
+                ],
+                [
+                  '5',
+                  '6',
+                  '8',
+                  '9'
+                ],
+                [
+                  '11',
+                  '12',
+                  '8',
+                  '9'
+                ],
+                [
+                  '11',
+                  '12',
+                  '14',
+                  '15'
+                ],
+                [
+                  '14',
+                  '15',
+                  '17',
+                  '18'
+                ],
+                [
+                  '17',
+                  '18',
+                  '20',
+                  '21'
+                ],
+                [
+                  '20',
+                  '21',
+                  '23',
+                  '24'
+                ],
+                [
+                  '23',
+                  '24',
+                  '26',
+                  '27'
+                ],
+                [
+                  '26',
+                  '27',
+                  '29',
+                  '30'
+                ],
+                [
+                  '29',
+                  '30',
+                  '32',
+                  '33'
+                ],
+                [
+                  '32',
+                  '33',
+                  '35',
+                  '36'
+                ],
+                [
+                  '1',
+                  '2',
+                  '4',
+                  '5'
+                ],
+                [
+                  '4',
+                  '5',
+                  '7',
+                  '8'
+                ],
+                [
+                  '10',
+                  '11',
+                  '7',
+                  '8'
+                ],
+                [
+                  '10',
+                  '11',
+                  '13',
+                  '14'
+                ],
+                [
+                  '13',
+                  '14',
+                  '16',
+                  '17'
+                ],
+                [
+                  '16',
+                  '17',
+                  '19',
+                  '20'
+                ],
+                [
+                  '19',
+                  '20',
+                  '22',
+                  '23'
+                ],
+                [
+                  '22',
+                  '23',
+                  '25',
+                  '26'
+                ],
+                [
+                  '25',
+                  '26',
+                  '28',
+                  '29'
+                ],
+                [
+                  '28',
+                  '29',
+                  '31',
+                  '32'
+                ],
+                [
+                  '31',
+                  '32',
+                  '34',
+                  '35'
+                ]
+              ]
+            },
+            line: {
+              ratio: 5,
+                numberMapping: [
+                [
+                  '1',
+                  '2',
+                  '3',
+                  '4',
+                  '5',
+                  '6'
+                ],
+                [
+                  '4',
+                  '5',
+                  '6',
+                  '7',
+                  '8',
+                  '9'
+                ],
+                [
+                  '10',
+                  '11',
+                  '12',
+                  '7',
+                  '8',
+                  '9'
+                ],
+                [
+                  '10',
+                  '11',
+                  '12',
+                  '13',
+                  '14',
+                  '15'
+                ],
+                [
+                  '13',
+                  '14',
+                  '15',
+                  '16',
+                  '17',
+                  '18'
+                ],
+                [
+                  '16',
+                  '17',
+                  '18',
+                  '19',
+                  '20',
+                  '21'
+                ],
+                [
+                  '19',
+                  '20',
+                  '21',
+                  '22',
+                  '23',
+                  '24'
+                ],
+                [
+                  '22',
+                  '23',
+                  '24',
+                  '25',
+                  '26',
+                  '27'
+                ],
+                [
+                  '25',
+                  '26',
+                  '27',
+                  '28',
+                  '29',
+                  '30'
+                ],
+                [
+                  '28',
+                  '29',
+                  '30',
+                  '31',
+                  '32',
+                  '33'
+                ],
+                [
+                  '31',
+                  '32',
+                  '33',
+                  '34',
+                  '35',
+                  '36'
+                ]
+              ]
+            },
+            street: {
+              ratio: 11,
+                numberMapping: [
+                [
+                  '0',
+                  '1',
+                  '2'
+                ],
+                [
+                  '0',
+                  '2',
+                  '3'
+                ],
+                [
+                  '1',
+                  '2',
+                  '3'
+                ],
+                [
+                  '4',
+                  '5',
+                  '6'
+                ],
+                [
+                  '7',
+                  '8',
+                  '9'
+                ],
+                [
+                  '10',
+                  '11',
+                  '12'
+                ],
+                [
+                  '13',
+                  '14',
+                  '15'
+                ],
+                [
+                  '16',
+                  '17',
+                  '18'
+                ],
+                [
+                  '19',
+                  '20',
+                  '21'
+                ],
+                [
+                  '22',
+                  '23',
+                  '24'
+                ],
+                [
+                  '25',
+                  '26',
+                  '27'
+                ],
+                [
+                  '28',
+                  '29',
+                  '30'
+                ],
+                [
+                  '31',
+                  '32',
+                  '33'
+                ],
+                [
+                  '34',
+                  '35',
+                  '36'
+                ]
+              ]
+            }
+          },
+          countdown: {
+            isActive: false
+          }
+        }
+      };
+      window.onload = () => {
+        const btn1Ref = document.getElementById('config_1_btn');
+        const btn2Ref = document.getElementById('config_2_btn');
+        const iframe =  document.getElementById('iframe');
+
+        const btn1Handler = () => {
+          iframe.contentWindow.postMessage({ type: 'reInit', payload: c01 }, '*');
+          iframe.classList.remove('hidden');
+          btn2Ref.classList.remove('active');
+          btn1Ref.classList.add('active');
+          console.log('PERFORMANCE: START clicked');
+        }
+        const btn2Handler = () => {
+          iframe.contentWindow.postMessage({ type: 'reInit', payload: d01 }, '*');
+          iframe.classList.remove('hidden');
+          btn1Ref.classList.remove('active');
+          btn2Ref.classList.add('active');
+          console.log('PERFORMANCE: START clicked');
+        }
+
+        btn1Ref.addEventListener('click', btn1Handler);
+        btn2Ref.addEventListener('click', btn2Handler);
+      };
+
+    </script>
+</head>
+<body>
+   <div class="container">
+       <button id="config_1_btn">Roulette C01 [sw_ss_gro]</button>
+       <button id="config_2_btn">Roulette D01 [sw_xpg_hro]</button>
+   </div>
+    <iframe
+            class="hidden"
+            id="iframe"
+            src="http://static-as-http-edged.ss211208.com/live-client-roulette/feature_preinitgame/1/roulette/?live=1&providerGameCode=sw_live_erol&url=http://api.cd2.d.skywind-tech.com:4000/casino/game2"
+            width="100%"
+            height="100%"
+            frameBorder="0"
+            allowfullscreen
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+    ></iframe>
+</body>
+</html>
